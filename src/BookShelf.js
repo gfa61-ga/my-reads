@@ -6,7 +6,7 @@ class BookShelf extends React.Component {
   static propTypes = {
     books: PropTypes.array.isRequired,
     title: PropTypes.string.isRequired,
-    moveBook: PropTypes.func.isRequired
+    handleSelectedBook: PropTypes.func.isRequired
   }
 
   render() {
@@ -16,7 +16,8 @@ class BookShelf extends React.Component {
         <div className="bookshelf-books">
           <ol className="books-grid">
             {this.props.books.map(book =>
-              <Book key={book.id} book={book} moveBook={this.props.moveBook}/>
+              <Book key={book.id} book={book}
+                handleSelectedBook={this.props.handleSelectedBook}/>
             )}
           </ol>
         </div>

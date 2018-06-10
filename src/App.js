@@ -22,13 +22,17 @@ class BooksApp extends React.Component {
     )
   }
 
-  moveBook = (bookToMove, toShelf) => {
+  handleSelectedBook = (bookToMove, toShelf) => {
     this.setState((prevState) => {
-      prevState.books.find(book =>
-        book.id === bookToMove.id).shelf = toShelf
+      if (toShelf !== 'none') {
+        prevState.books.find(book =>
+          book.id === bookToMove.id).shelf = toShelf
+      } else {
+        prevState.books = prevState.books.filter((book) => book.id !== bookToMove.id)
+      }
       return {books: prevState.books}
     })
-    BooksAPI.update(bookToMove, toShelf)
+    // BooksAPI.update(bookToMove, toShelf)
   }
 
   showSearchPage = () => {
@@ -37,7 +41,7 @@ class BooksApp extends React.Component {
 
   render() {
     const {books} = this.state
-
+console.log(books)
     return (
       <div className="app">
         {this.state.showSearchPage ? (
@@ -49,9 +53,12 @@ class BooksApp extends React.Component {
             </div>
             <div className="list-books-content">
               <div>
-                <BookShelf books={books.filter(book => book.shelf === 'currentlyReading')} title='Currently Reading' moveBook={this.moveBook}/>
-                <BookShelf books={books.filter(book => book.shelf === 'wantToRead')} title='Want to Read' moveBook={this.moveBook}/>
-                <BookShelf books={books.filter(book => book.shelf === 'read')} title='Read' moveBook={this.moveBook}/>
+                <BookShelf books={books.filter(book => book.shelf === 'currentlyReading')}
+                  title='Currently Reading' handleSelectedBook={this.handleSelectedBook}/>
+                <BookShelf books={books.filter(book => book.shelf === 'wantToRead')}
+                  title='Want to Read' handleSelectedBook={this.handleSelectedBook}/>
+                <BookShelf books={books.filter(book => book.shelf === 'read')}
+                  title='Read' handleSelectedBook={this.handleSelectedBook}/>
               </div>
             </div>
             <div className="open-search">
