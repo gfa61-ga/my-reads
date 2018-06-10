@@ -1,6 +1,11 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 
 class Book extends React.Component {
+  static propTypes = {
+    book: PropTypes.object.isRequired,
+    moveBook: PropTypes.func.isRequired
+  }
 
   render() {
     const {book} = this.props
@@ -13,7 +18,8 @@ class Book extends React.Component {
             </div>
             <div className="book-shelf-changer">
               <select value={book.shelf} onChange={(event) => {
-                    this.props.handleSelect(book, event.target.value)
+                    const toShelf = event.target.value
+                    this.props.moveBook(book, toShelf)
                   }
                 }>
                 <option value="move" disabled>Move to...</option>
