@@ -21,6 +21,15 @@ class BooksApp extends React.Component {
     )
   }
 
+  handleSelect = (bookToMove, toShelf) => {
+    this.setState((prevState) => {
+      prevState.books.find(book =>
+        book.id === bookToMove.id).shelf = toShelf
+      return {books: prevState.books}
+    })
+    BooksAPI.update(bookToMove, toShelf)
+  }
+
   render() {
     const {books} = this.state
 
@@ -54,9 +63,9 @@ class BooksApp extends React.Component {
             </div>
             <div className="list-books-content">
               <div>
-                <BookShelf books={books.filter(book => book.shelf === 'currentlyReading')} title='Currently Reading'/>
-                <BookShelf books={books.filter(book => book.shelf === 'wantToRead')} title='Want to Read'/>
-                <BookShelf books={books.filter(book => book.shelf === 'read')} title='Read'/>
+                <BookShelf books={books.filter(book => book.shelf === 'currentlyReading')} title='Currently Reading' handleSelect={this.handleSelect}/>
+                <BookShelf books={books.filter(book => book.shelf === 'wantToRead')} title='Want to Read' handleSelect={this.handleSelect}/>
+                <BookShelf books={books.filter(book => book.shelf === 'read')} title='Read' handleSelect={this.handleSelect}/>
               </div>
             </div>
             <div className="open-search">
