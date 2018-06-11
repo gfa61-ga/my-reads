@@ -13,6 +13,12 @@ class BookSearch extends React.Component {
     const query = newQuery.replace(/[^a-zA-Z ]+/g, '').replace(/\s+/g, ' ').split(' ')
     BooksAPI.search(query[0]).then(booksFound => {
       this.searchResult = booksFound ? booksFound : []
+      for (let i = 1; i < query.length; i++) {
+        this.searchResult = this.searchResult.filter(book =>
+          book.title.toLowerCase().includes(query[i].toLowerCase()) ||
+            (book.authors && book.authors.join(' ').toLowerCase().includes(query[i].toLowerCase()))
+          )
+        }
       this.setState({query: query.join(' ')})
     })
   }

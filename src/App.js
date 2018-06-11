@@ -32,7 +32,7 @@ class BooksApp extends React.Component {
       }
       return {books: prevState.books}
     })
-    // BooksAPI.update(bookToMove, toShelf)
+    BooksAPI.update(bookToMove, toShelf)
   }
 
   showSearchPage = () => {
@@ -41,7 +41,6 @@ class BooksApp extends React.Component {
 
   render() {
     const {books} = this.state
-console.log(books)
     return (
       <div className="app">
         {this.state.showSearchPage ? (
