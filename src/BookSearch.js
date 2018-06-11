@@ -10,17 +10,21 @@ class BookSearch extends React.Component {
   searchResult = [];
 
   searchQuery = (newQuery) => {
-    const query = newQuery.replace(/[^a-zA-Z ]+/g, '').replace(/\s+/g, ' ').split(' ')
-    BooksAPI.search(query[0]).then(booksFound => {
-      this.searchResult = booksFound ? booksFound : []
-      for (let i = 1; i < query.length; i++) {
-        this.searchResult = this.searchResult.filter(book =>
-          book.title.toLowerCase().includes(query[i].toLowerCase()) ||
-            (book.authors && book.authors.join(' ').toLowerCase().includes(query[i].toLowerCase()))
-          )
-        }
-      this.setState({query: query.join(' ')})
-    })
+    const query = newQuery.replace(/[^a-zA-Z ]+/g, '').replace(/\s+/g, ' ')
+    if (query.length > 0) {
+      BooksAPI.search(query).then(booksFound => {
+        console.log(query)
+        console.log(booksFound)
+        this.searchResult = booksFound
+        this.setState({query: query})
+      }).catch(() => {
+        this.searchResult = [];
+        this.setState({query: query})
+      })
+    } else {
+      this.searchResult = [];
+      this.setState({query: ''})
+    }
   }
 
   render() {
