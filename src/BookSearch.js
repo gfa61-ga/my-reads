@@ -1,8 +1,14 @@
 import React from 'react'
 import * as BooksAPI from './BooksAPI'
 import Book from'./Book'
+import PropTypes from 'prop-types'
 
 class BookSearch extends React.Component {
+  static propTypes = {
+    books: PropTypes.array.isRequired,
+    handleSelectedBook: PropTypes.func.isRequired
+  }
+
   state = {
     query: ''
   }
@@ -13,8 +19,6 @@ class BookSearch extends React.Component {
     const query = newQuery.replace(/[^a-zA-Z ]+/g, '').replace(/\s+/g, ' ')
     if (query.length > 0) {
       BooksAPI.search(query).then(booksFound => {
-        console.log(query)
-        console.log(booksFound)
         this.searchResult = booksFound
         this.setState({query: query})
       }).catch(() => {
@@ -54,9 +58,22 @@ class BookSearch extends React.Component {
         <div className="search-books-results">
           <ol className="books-grid">
             {this.searchResult.length > 0 &&
-              this.searchResult.map(book =>
-                <Book key={book.id} book={book} />
-              )
+              this.searchResult.map(book => {
+                this.props.books.forEach(bookInState => {
+                  if (book.id === bookInState.id) {
+                    book.shelf=bookInState.shelf
+                  }
+                })
+                if (!book.shelf) {
+                  book.shelf='none'
+                }
+                return (
+                  <Book
+                    key={book.id}
+                    book={book}
+                    handleSelectedBook={this.props.handleSelectedBook}/>
+                )
+              })
             }
           </ol>
         </div>
@@ -64,4 +81,5 @@ class BookSearch extends React.Component {
     )
   }
 }
+
 export default BookSearch

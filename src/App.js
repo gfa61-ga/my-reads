@@ -24,6 +24,9 @@ class BooksApp extends React.Component {
 
   handleSelectedBook = (bookToMove, toShelf) => {
     this.setState((prevState) => {
+      if (bookToMove.shelf === 'none') {
+        prevState.books.push(bookToMove)
+      }
       if (toShelf !== 'none') {
         prevState.books.find(book =>
           book.id === bookToMove.id).shelf = toShelf
@@ -44,7 +47,10 @@ class BooksApp extends React.Component {
     return (
       <div className="app">
         {this.state.showSearchPage ? (
-          <BookSearch showSearchPage={this.showSearchPage}/>
+          <BookSearch
+            showSearchPage={this.showSearchPage}
+            books={this.state.books}
+            handleSelectedBook={this.handleSelectedBook}/>
         ) : (
           <div className="list-books">
             <div className="list-books-title">
@@ -52,12 +58,18 @@ class BooksApp extends React.Component {
             </div>
             <div className="list-books-content">
               <div>
-                <BookShelf books={books.filter(book => book.shelf === 'currentlyReading')}
-                  title='Currently Reading' handleSelectedBook={this.handleSelectedBook}/>
-                <BookShelf books={books.filter(book => book.shelf === 'wantToRead')}
-                  title='Want to Read' handleSelectedBook={this.handleSelectedBook}/>
-                <BookShelf books={books.filter(book => book.shelf === 'read')}
-                  title='Read' handleSelectedBook={this.handleSelectedBook}/>
+                <BookShelf
+                  books={books.filter(book => book.shelf === 'currentlyReading')}
+                  title='Currently Reading'
+                  handleSelectedBook={this.handleSelectedBook}/>
+                <BookShelf
+                  books={books.filter(book => book.shelf === 'wantToRead')}
+                  title='Want to Read'
+                  handleSelectedBook={this.handleSelectedBook}/>
+                <BookShelf
+                  books={books.filter(book => book.shelf === 'read')}
+                  title='Read'
+                  handleSelectedBook={this.handleSelectedBook}/>
               </div>
             </div>
             <div className="open-search">
