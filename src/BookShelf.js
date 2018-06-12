@@ -19,7 +19,8 @@ class BookShelf extends React.Component {
               <Book
                 key={book.id}
                 book={book}
-                handleSelectedBook={this.props.handleSelectedBook}/>
+                handleSelectedBook={this.props.handleSelectedBook}
+              />
             )}
           </ol>
         </div>

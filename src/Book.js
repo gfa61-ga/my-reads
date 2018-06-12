@@ -14,15 +14,14 @@ class Book extends React.Component {
         <div className="book">
           <div className="book-top">
             <div className="book-cover"
-             style={{ width: 128, height: 193,
+              style={{ width: 128, height: 193,
               backgroundImage: book.imageLinks && `url(${book.imageLinks.thumbnail})`}}>
             </div>
             <div className="book-shelf-changer">
               <select value={book.shelf} onChange={(event) => {
-                    const toShelf = event.target.value
-                    this.props.handleSelectedBook(book, toShelf)
-                  }
-                }>
+                  const toShelf = event.target.value
+                  this.props.handleSelectedBook(book, toShelf)
+                }}>
                 <option value="move" disabled>Move to...</option>
                 <option value="currentlyReading">Currently Reading</option>
                 <option value="wantToRead">Want to Read</option>

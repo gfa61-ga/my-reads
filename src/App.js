@@ -11,6 +11,21 @@ class BooksApp extends React.Component {
     books: []
   }
 
+  shelves = [
+    {
+      name: 'currentlyReading',
+      title: 'Currently Reading'
+    },
+    {
+      name: 'wantToRead',
+      title: 'Want to Read'
+    },
+    {
+      name: 'read',
+      title: 'Read'
+    }
+  ]
+
   componentDidMount() {
     BooksAPI.getAll().then(books =>
       this.setState({books})
@@ -23,25 +38,31 @@ class BooksApp extends React.Component {
         prevState.books.push(bookToMove)
       }
       if (toShelf !== 'none') {
-        prevState.books.find(book =>
-          book.id === bookToMove.id).shelf = toShelf
+        prevState.books.find(book => (
+          book.id === bookToMove.id)
+        ).shelf = toShelf
       } else {
         prevState.books = prevState.books.filter((book) => book.id !== bookToMove.id)
       }
       return {books: prevState.books}
     })
+
     BooksAPI.update(bookToMove, toShelf)
   }
 
   render() {
     const {books} = this.state
+
     return (
       <div className="app">
+
         <Route path='/search' render={() => (
           <BookSearch
-            books={this.state.books}
-            handleSelectedBook={this.handleSelectedBook}/>
+            books={books}
+            handleSelectedBook={this.handleSelectedBook}
+          />
         )}/>
+
         <Route exact path='/' render={() => (
           <div className="list-books">
             <div className="list-books-title">
@@ -49,18 +70,13 @@ class BooksApp extends React.Component {
             </div>
             <div className="list-books-content">
               <div>
-                <BookShelf
-                  books={books.filter(book => book.shelf === 'currentlyReading')}
-                  title='Currently Reading'
-                  handleSelectedBook={this.handleSelectedBook}/>
-                <BookShelf
-                  books={books.filter(book => book.shelf === 'wantToRead')}
-                  title='Want to Read'
-                  handleSelectedBook={this.handleSelectedBook}/>
-                <BookShelf
-                  books={books.filter(book => book.shelf === 'read')}
-                  title='Read'
-                  handleSelectedBook={this.handleSelectedBook}/>
+                {this.shelves.map((shelf) =>
+                  <BookShelf
+                    books={books.filter(book => book.shelf === shelf.name)}
+                    title={shelf.title}
+                    handleSelectedBook={this.handleSelectedBook}
+                  />
+                )}
               </div>
             </div>
             <div className="open-search">
@@ -70,6 +86,7 @@ class BooksApp extends React.Component {
             </div>
           </div>
         )}/>
+
       </div>
     )
   }
