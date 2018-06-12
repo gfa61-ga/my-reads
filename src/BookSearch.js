@@ -1,12 +1,11 @@
 import React from 'react'
-import * as BooksAPI from './BooksAPI'
-import Book from'./Book'
+import SearchResults from './SearchResults'
 import PropTypes from 'prop-types'
 import { Link } from 'react-router-dom'
 
 class BookSearch extends React.Component {
   static propTypes = {
-    books: PropTypes.array.isRequired,
+    booksInShelves: PropTypes.array.isRequired,
     handleSelectedBook: PropTypes.func.isRequired
   }
 
@@ -14,23 +13,16 @@ class BookSearch extends React.Component {
     query: ''
   }
 
-  searchResult = [];
+  updateQuery = (newQuery) => {
+    // Remove any non letter character and any leading space from query and let only one space between words
+    const validatedQuery = newQuery.replace(/[^a-zA-Z ]+|^\s/g, '').replace(/\s+/g, ' ')
 
-  searchQuery = (newQuery) => {
-    const validatedQuery = newQuery.replace(/[^a-zA-Z ]+/g, '').replace(/\s+/g, ' ')
+    this.setState({query: validatedQuery})
+  }
 
-    if (validatedQuery.length > 0) {
-      BooksAPI.search(validatedQuery).then(booksFound => {
-        this.searchResult = booksFound
-        this.setState({query: validatedQuery})
-      }).catch(() => {
-        this.searchResult = [];
-        this.setState({query: validatedQuery})
-      })
-    } else {
-      this.searchResult = [];
-      this.setState({query: ''})
-    }
+  // Autofocus the input field
+  componentDidMount(){
+   this.inputField.focus();
   }
 
   render() {
@@ -40,41 +32,34 @@ class BookSearch extends React.Component {
           <Link to='/' className="close-search" >
             Close
           </Link>
+
           <div className="search-books-input-wrapper">
             {/* NOTE: The search from BooksAPI is limited to a particular set of search terms */}
-            <input type="text"
-              placeholder="Search by title or author"
-              value={this.state.query}
+            <input type="text" placeholder="Search by title or author"
+
+              ref={thisInputElement =>
+                /* Store a reference of this input element to this.inputField */
+                this.inputField = thisInputElement
+              }
+
+              value={/* Display current query, as it is stored in state */
+                this.state.query
+              }
+
               onChange={event => {
+                /* When query is updated, call updateQuery() method to handle it */
                 const newQuery = event.target.value
-                this.searchQuery(newQuery)
+                this.updateQuery(newQuery)
               }}
             />
           </div>
         </div>
-        <div className="search-books-results">
-          <ol className="books-grid">
-            {this.searchResult.length > 0 &&
-              this.searchResult.map(book => {
-                this.props.books.forEach(bookInState => {
-                  if (book.id === bookInState.id) {
-                    book.shelf=bookInState.shelf
-                  }
-                })
-                if (!book.shelf) {
-                  book.shelf='none'
-                }
-                return (
-                  <Book
-                    key={book.id}
-                    book={book}
-                    handleSelectedBook={this.props.handleSelectedBook}
-                  />
-                )
-              })
-            }
-          </ol>
-        </div>
+
+        <SearchResults
+          query={this.state.query}
+          booksInShelves={this.props.booksInShelves}
+          handleSelectedBook={this.props.handleSelectedBook}
+        />
       </div>
     )
   }

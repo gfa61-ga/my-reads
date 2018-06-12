@@ -4,7 +4,7 @@ import PropTypes from 'prop-types'
 
 class BookShelf extends React.Component {
   static propTypes = {
-    books: PropTypes.array.isRequired,
+    booksInShelf: PropTypes.array.isRequired,
     title: PropTypes.string.isRequired,
     handleSelectedBook: PropTypes.func.isRequired
   }
@@ -15,7 +15,9 @@ class BookShelf extends React.Component {
         <h2 className="bookshelf-title">{this.props.title}</h2>
         <div className="bookshelf-books">
           <ol className="books-grid">
-            {this.props.books.map(book =>
+
+            {/* Display booksInShelf */
+              this.props.booksInShelf.map(book =>
               <Book
                 key={book.id}
                 book={book}

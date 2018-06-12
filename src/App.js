@@ -8,7 +8,7 @@ import { Link } from 'react-router-dom'
 
 class BooksApp extends React.Component {
   state = {
-    books: []
+    booksInShelves: []
   }
 
   shelves = [
@@ -26,39 +26,46 @@ class BooksApp extends React.Component {
     }
   ]
 
+  // When App is first loaded, get all booksInShelves from Server
   componentDidMount() {
     BooksAPI.getAll().then(books =>
-      this.setState({books})
+      this.setState({booksInShelves: books})
     )
   }
 
   handleSelectedBook = (bookToMove, toShelf) => {
     this.setState((prevState) => {
+      // If bookToMove is not in booksInShelves, add it
       if (bookToMove.shelf === 'none') {
-        prevState.books.push(bookToMove)
+        prevState.booksInShelves.push(bookToMove)
       }
+
+      // If a shelf selected, move book toShelf, else remove it from booksInShelves
       if (toShelf !== 'none') {
-        prevState.books.find(book => (
+        prevState.booksInShelves.find(book => (
           book.id === bookToMove.id)
         ).shelf = toShelf
       } else {
-        prevState.books = prevState.books.filter((book) => book.id !== bookToMove.id)
+        prevState.booksInShelves = prevState.booksInShelves.filter(book => book.id !== bookToMove.id)
       }
-      return {books: prevState.books}
+
+      // Update bookShelves
+      return {booksInShelves: prevState.booksInShelves}
     })
 
+    // Update Server
     BooksAPI.update(bookToMove, toShelf)
   }
 
   render() {
-    const {books} = this.state
+    const {booksInShelves} = this.state
 
     return (
       <div className="app">
 
         <Route path='/search' render={() => (
           <BookSearch
-            books={books}
+            booksInShelves={booksInShelves}
             handleSelectedBook={this.handleSelectedBook}
           />
         )}/>
@@ -70,15 +77,19 @@ class BooksApp extends React.Component {
             </div>
             <div className="list-books-content">
               <div>
-                {this.shelves.map((shelf) =>
+
+                {/* Send booksInShelves in their shelves*/
+                  this.shelves.map(shelf =>
                   <BookShelf
-                    books={books.filter(book => book.shelf === shelf.name)}
+                    key={shelf.name}
+                    booksInShelf={booksInShelves.filter(book => book.shelf === shelf.name)}
                     title={shelf.title}
                     handleSelectedBook={this.handleSelectedBook}
                   />
                 )}
               </div>
             </div>
+
             <div className="open-search">
               <Link to='/search'>
                 Add a book
