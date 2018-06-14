@@ -28,33 +28,32 @@ class BooksApp extends React.Component {
 
   // When App is first loaded, get all booksInShelves from Server
   componentDidMount() {
-    BooksAPI.getAll().then(books =>
-      this.setState({booksInShelves: books})
+    BooksAPI.getAll().then(booksReceived =>
+      this.setState({booksInShelves: booksReceived})
     )
   }
 
   handleSelectedBook = (bookToMove, toShelf) => {
-    this.setState((prevState) => {
-      // If bookToMove is not in booksInShelves, add it
-      if (bookToMove.shelf === 'none') {
-        prevState.booksInShelves.push(bookToMove)
-      }
+    let booksInShelves = this.state.booksInShelves
 
-      // If a shelf selected, move book toShelf, else remove it from booksInShelves
-      if (toShelf !== 'none') {
-        prevState.booksInShelves.find(book => (
-          book.id === bookToMove.id)
-        ).shelf = toShelf
-      } else {
-        prevState.booksInShelves = prevState.booksInShelves.filter(book => book.id !== bookToMove.id)
-      }
+    // If bookToMove is not in booksInShelves, add it
+    if (bookToMove.shelf === 'none') {
+      booksInShelves.push(bookToMove)
+    }
 
-      // Update bookShelves
-      return {booksInShelves: prevState.booksInShelves}
-    })
+    // If a shelf is selected, move book toShelf, else remove it from booksInShelves
+    if (toShelf !== 'none') {
+      booksInShelves.find(book => (
+        book.id === bookToMove.id)
+      ).shelf = toShelf
+    } else {
+      booksInShelves = booksInShelves.filter(book => book.id !== bookToMove.id)
+    }
 
-    // Update Server
-    BooksAPI.update(bookToMove, toShelf)
+    // Update Server and then update bookShelves
+    BooksAPI.update(bookToMove, toShelf).then(() =>
+      this.setState({booksInShelves})
+    )
   }
 
   render() {
